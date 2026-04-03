@@ -91,6 +91,31 @@ const zh = {
   "locale.list_header": "支持的语言:",
   "locale.list_current_marker": "(当前)",
 
+  // add
+  "add.description": "交互式添加新配置",
+  "add.prompt_name": "供应商名称 (如 OpenRouter): ",
+  "add.prompt_base_url": "ANTHROPIC_BASE_URL: ",
+  "add.prompt_auth_token": "ANTHROPIC_AUTH_TOKEN: ",
+  "add.prompt_model": "ANTHROPIC_MODEL: ",
+  "add.prompt_default_opus": "ANTHROPIC_DEFAULT_OPUS_MODEL (回车跳过): ",
+  "add.prompt_default_sonnet": "ANTHROPIC_DEFAULT_SONNET_MODEL (回车跳过): ",
+  "add.prompt_default_haiku": "ANTHROPIC_DEFAULT_HAIKU_MODEL (回车跳过): ",
+  "add.mode_select": "选择添加方式:",
+  "add.mode_interactive": "逐步填写",
+  "add.mode_json": "直接编写 JSON",
+  "add.mode_choose": "请选择 (1/2): ",
+  "add.json_template_hint": "请在编辑器中填写配置，保存并退出",
+  "add.json_parse_error": "JSON 解析失败，请检查格式",
+  "add.back_hint": "输入 < 返回上一步",
+  "add.name_required": "供应商名称不能为空",
+  "add.field_required": "{field} 不能为空",
+  "add.already_exists": '配置 "{name}" 已存在，是否覆盖？(y/N) ',
+  "add.edit_confirm": "是否在编辑器中编辑配置？(y/N) ",
+  "add.preview_header": "配置预览:",
+  "add.done": '✓ 已保存配置 "{name}"',
+  "add.switch_confirm": "是否立即切换到此配置？(Y/n) ",
+  "add.cancelled": "已取消",
+
   // store errors
   "store.db_not_found": "cc-switch 数据库不存在: {path}",
 } as const;

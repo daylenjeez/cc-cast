@@ -6,6 +6,10 @@ import { readRc, writeRc, getStore } from "./utils.js";
 import { ccSwitchExists } from "./store/cc-switch.js";
 import { readClaudeSettings, applyProfile, getSettingsPath } from "./claude.js";
 import { createInterface } from "readline";
+import { spawnSync } from "child_process";
+import { writeFileSync, readFileSync, unlinkSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
 import { t } from "./i18n/index.js";
 
 const program = new Command();
@@ -310,6 +314,148 @@ program
     store.setCurrent(name);
 
     console.log(chalk.green(t("save.done", { name })));
+  });
+
+// Helper: open editor with content, return parsed JSON or null
+function openEditor(name: string, content: Record<string, unknown>): Record<string, unknown> | null {
+  const tmpFile = join(tmpdir(), `ccm-${name}-${Date.now()}.json`);
+  writeFileSync(tmpFile, JSON.stringify(content, null, 2));
+
+  const editor = process.env.EDITOR || "vi";
+  const result = spawnSync(editor, [tmpFile], { stdio: "inherit" });
+
+  let parsed: Record<string, unknown> | null = null;
+  if (result.status === 0) {
+    try {
+      parsed = JSON.parse(readFileSync(tmpFile, "utf-8"));
+    } catch {
+      console.log(chalk.red(t("add.json_parse_error")));
+    }
+  }
+
+  try { unlinkSync(tmpFile); } catch { /* ignore */ }
+  return parsed;
+}
+
+// Helper: save and optionally switch after add
+async function saveAndSwitch(store: ReturnType<typeof ensureStore>, name: string, settingsConfig: Record<string, unknown>) {
+  store.save(name, settingsConfig);
+  console.log(chalk.green(t("add.done", { name })));
+
+  const switchChoice = await ask(t("add.switch_confirm"));
+  if (switchChoice.toLowerCase() !== "n") {
+    applyProfile(settingsConfig);
+    store.setCurrent(name);
+    console.log(chalk.green(t("use.done", { name: chalk.bold(name) })));
+    console.log(chalk.gray(`  ${t("use.restart")}`));
+  }
+}
+
+// ccm add
+program
+  .command("add")
+  .alias("new")
+  .description(t("add.description"))
+  .action(async () => {
+    const store = ensureStore();
+
+    // 1. Ask name first
+    const name = await ask(t("add.prompt_name"));
+    if (!name) {
+      console.log(chalk.red(t("add.name_required")));
+      return;
+    }
+
+    // Check if exists
+    const existing = store.get(name);
+    if (existing) {
+      const overwrite = await ask(t("add.already_exists", { name }));
+      if (overwrite.toLowerCase() !== "y") {
+        console.log(chalk.gray(t("add.cancelled")));
+        return;
+      }
+    }
+
+    // 2. Choose mode
+    console.log(`\n${chalk.bold(t("add.mode_select"))}\n`);
+    console.log(`  ${chalk.cyan("1)")} ${t("add.mode_interactive")}`);
+    console.log(`  ${chalk.cyan("2)")} ${t("add.mode_json")}\n`);
+    const mode = await ask(t("add.mode_choose"));
+
+    if (mode === "2") {
+      // JSON mode: open editor with template
+      const template: Record<string, unknown> = {
+        env: {
+          ANTHROPIC_BASE_URL: "",
+          ANTHROPIC_AUTH_TOKEN: "",
+          ANTHROPIC_MODEL: "",
+          ANTHROPIC_DEFAULT_OPUS_MODEL: "",
+          ANTHROPIC_DEFAULT_SONNET_MODEL: "",
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: "",
+        },
+      };
+
+      console.log(chalk.gray(t("add.json_template_hint")));
+      const edited = openEditor(name, template);
+      if (!edited) return;
+
+      await saveAndSwitch(store, name, edited);
+      return;
+    }
+
+    // Interactive mode with step-based back support
+    interface Step { key: string; prompt: string; required: boolean; }
+    const steps: Step[] = [
+      { key: "ANTHROPIC_BASE_URL", prompt: t("add.prompt_base_url"), required: true },
+      { key: "ANTHROPIC_AUTH_TOKEN", prompt: t("add.prompt_auth_token"), required: true },
+      { key: "ANTHROPIC_MODEL", prompt: t("add.prompt_model"), required: true },
+      { key: "ANTHROPIC_DEFAULT_OPUS_MODEL", prompt: t("add.prompt_default_opus"), required: false },
+      { key: "ANTHROPIC_DEFAULT_SONNET_MODEL", prompt: t("add.prompt_default_sonnet"), required: false },
+      { key: "ANTHROPIC_DEFAULT_HAIKU_MODEL", prompt: t("add.prompt_default_haiku"), required: false },
+    ];
+
+    console.log(chalk.gray(t("add.back_hint")));
+    const values: Record<string, string> = {};
+    let i = 0;
+    while (i < steps.length) {
+      const step = steps[i];
+      const input = await ask(step.prompt);
+
+      if (input === "<") {
+        if (i > 0) i--;
+        continue;
+      }
+
+      if (step.required && !input) {
+        console.log(chalk.red(t("add.field_required", { field: step.key })));
+        continue;
+      }
+
+      if (input) values[step.key] = input;
+      else delete values[step.key];
+      i++;
+    }
+
+    // Build config
+    const env: Record<string, string> = {};
+    for (const [k, v] of Object.entries(values)) {
+      env[k] = v;
+    }
+
+    let settingsConfig: Record<string, unknown> = { env };
+
+    // Preview + optional edit
+    console.log(`\n${chalk.bold(t("add.preview_header"))}\n`);
+    console.log(JSON.stringify(settingsConfig, null, 2));
+    console.log();
+
+    const editChoice = await ask(t("add.edit_confirm"));
+    if (editChoice.toLowerCase() === "y") {
+      const edited = openEditor(name, settingsConfig);
+      if (edited) settingsConfig = edited;
+    }
+
+    await saveAndSwitch(store, name, settingsConfig);
   });
 
 // ccm show <name>

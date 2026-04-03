@@ -93,6 +93,31 @@ const en: Record<TranslationKey, string> = {
   "locale.list_header": "Supported languages:",
   "locale.list_current_marker": "(current)",
 
+  // add
+  "add.description": "Interactively add a new configuration",
+  "add.prompt_name": "Provider name (e.g. OpenRouter): ",
+  "add.prompt_base_url": "ANTHROPIC_BASE_URL: ",
+  "add.prompt_auth_token": "ANTHROPIC_AUTH_TOKEN: ",
+  "add.prompt_model": "ANTHROPIC_MODEL: ",
+  "add.prompt_default_opus": "ANTHROPIC_DEFAULT_OPUS_MODEL (press Enter to skip): ",
+  "add.prompt_default_sonnet": "ANTHROPIC_DEFAULT_SONNET_MODEL (press Enter to skip): ",
+  "add.prompt_default_haiku": "ANTHROPIC_DEFAULT_HAIKU_MODEL (press Enter to skip): ",
+  "add.mode_select": "Choose how to add:",
+  "add.mode_interactive": "Step by step",
+  "add.mode_json": "Write JSON directly",
+  "add.mode_choose": "Choose (1/2): ",
+  "add.json_template_hint": "Fill in the configuration in editor, save and exit",
+  "add.json_parse_error": "JSON parse error, please check format",
+  "add.back_hint": "Type < to go back",
+  "add.name_required": "Provider name cannot be empty",
+  "add.field_required": "{field} cannot be empty",
+  "add.already_exists": 'Configuration "{name}" already exists. Overwrite? (y/N) ',
+  "add.edit_confirm": "Edit configuration in editor? (y/N) ",
+  "add.preview_header": "Configuration preview:",
+  "add.done": '✓ Saved configuration "{name}"',
+  "add.switch_confirm": "Switch to this configuration now? (Y/n) ",
+  "add.cancelled": "Cancelled",
+
   // store errors
   "store.db_not_found": "cc-switch database not found: {path}",
 };
