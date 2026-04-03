@@ -87,9 +87,11 @@ const en: Record<TranslationKey, string> = {
   "locale.set_description": "Set language (zh/en)",
   "locale.set_done": "✓ Language set to {locale}",
   "locale.set_invalid": "Unsupported language: {locale}. Available: zh, en",
-  "locale.list_description": "List all supported languages",
+  "locale.list_description": "List and select language",
   "locale.list_header": "Supported languages:",
   "locale.list_current_marker": "(current)",
+  "locale.select": "Select language:",
+  "locale.choose_number": "Enter number to switch (Enter to skip): ",
 
   // add
   "add.description": "Interactively add a new configuration",

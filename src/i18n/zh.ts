@@ -85,9 +85,11 @@ const zh = {
   "locale.set_description": "设置语言 (zh/en)",
   "locale.set_done": "✓ 语言已设置为 {locale}",
   "locale.set_invalid": "不支持的语言: {locale}，可选: zh, en",
-  "locale.list_description": "列出所有支持的语言",
+  "locale.list_description": "列出并选择语言",
   "locale.list_header": "支持的语言:",
   "locale.list_current_marker": "(当前)",
+  "locale.select": "选择语言:",
+  "locale.choose_number": "输入序号切换 (回车跳过): ",
 
   // add
   "add.description": "交互式添加新配置",

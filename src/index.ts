@@ -10,7 +10,7 @@ import { spawnSync } from "child_process";
 import { writeFileSync, readFileSync, unlinkSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
-import { t } from "./i18n/index.js";
+import { t, setLocale } from "./i18n/index.js";
 import prompts from "prompts";
 
 const program = new Command();
@@ -626,37 +626,73 @@ localeCmd
       console.log(chalk.red(t("locale.set_invalid", { locale: lang })));
       return;
     }
-    const rc = readRc();
-    if (!rc) {
-      console.log(chalk.yellow(t("common.not_init")));
-      return;
-    }
-    rc.locale = lang;
-    writeRc(rc);
-    console.log(chalk.green(t("locale.set_done", { locale: lang })));
+    switchLocale(lang);
   });
 
-const SUPPORTED_LOCALES: Record<string, string> = {
-  zh: "中文",
-  en: "English",
+const SUPPORTED_LOCALES: Array<{ code: string; label: string }> = [
+  { code: "zh", label: "中文" },
+  { code: "en", label: "English" },
+];
+
+const switchLocale = (code: string) => {
+  const rc = readRc();
+  if (!rc) { console.log(chalk.yellow(t("common.not_init"))); return; }
+  rc.locale = code as "zh" | "en";
+  writeRc(rc);
+  setLocale(code as "zh" | "en");
+  console.log(chalk.green(t("locale.set_done", { locale: code })));
 };
 
 localeCmd
   .command("list")
   .alias("ls")
   .description(t("locale.list_description"))
-  .action(() => {
+  .action(async () => {
     const rc = readRc();
     const current = rc?.locale || "zh";
-    console.log(chalk.bold(`\n${t("locale.list_header")}\n`));
-    for (const [code, label] of Object.entries(SUPPORTED_LOCALES)) {
-      const isCurrent = code === current;
-      const marker = isCurrent ? chalk.green("● ") : "  ";
-      const name = isCurrent ? chalk.green.bold(`${code} - ${label}`) : `${code} - ${label}`;
-      const tag = isCurrent ? ` ${chalk.gray(t("locale.list_current_marker"))}` : "";
-      console.log(`${marker}${name}${tag}`);
+    const isInteractive = process.stdin.isTTY && process.stdout.isTTY;
+
+    if (isInteractive) {
+      const choices = SUPPORTED_LOCALES.map(({ code, label }) => {
+        const isCurrent = code === current;
+        const marker = isCurrent ? chalk.green("● ") : "  ";
+        const name = isCurrent ? chalk.green.bold(`${code} - ${label}`) : `${code} - ${label}`;
+        const tag = isCurrent ? chalk.gray(` ${t("locale.list_current_marker")}`) : "";
+        return { title: `${marker}${name}${tag}`, value: code };
+      });
+
+      const initial = SUPPORTED_LOCALES.findIndex((l) => l.code === current);
+      const response = await prompts({
+        type: "select",
+        name: "code",
+        message: t("locale.select"),
+        choices,
+        initial: initial >= 0 ? initial : 0,
+      });
+
+      if (!response.code || response.code === current) return;
+      switchLocale(response.code);
+    } else {
+      console.log(chalk.bold(`\n${t("locale.list_header")}\n`));
+      SUPPORTED_LOCALES.forEach(({ code, label }, i) => {
+        const isCurrent = code === current;
+        const marker = isCurrent ? chalk.green("● ") : "  ";
+        const name = isCurrent ? chalk.green.bold(`${code} - ${label}`) : `${code} - ${label}`;
+        const tag = isCurrent ? chalk.gray(` ${t("locale.list_current_marker")}`) : "";
+        console.log(`${marker}${chalk.gray(`${i + 1}.`)} ${name}${tag}`);
+      });
+      console.log();
+      const input = await ask(t("locale.choose_number"));
+      if (!input) return;
+      const idx = parseInt(input, 10) - 1;
+      if (isNaN(idx) || idx < 0 || idx >= SUPPORTED_LOCALES.length) {
+        console.log(chalk.red(t("error.invalid_choice")));
+        return;
+      }
+      const selected = SUPPORTED_LOCALES[idx].code;
+      if (selected === current) return;
+      switchLocale(selected);
     }
-    console.log();
   });
 
 // Default: ccm locale (no subcommand) → show list
