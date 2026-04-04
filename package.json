@@ -1,5 +1,5 @@
 {
-  "name": "ccm-switch",
+  "name": "@daylenjeez/ccm-switch",
   "version": "1.2.0",
   "description": "Claude Code Model Switcher - 快速切换 Claude Code 自定义模型配置",
   "type": "module",
