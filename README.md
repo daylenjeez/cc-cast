@@ -43,14 +43,8 @@ cd ccm && npm install && npm run build && npm link
 ## 🚀 Quick Start
 
 ```bash
-# 1. Initialize — auto-detects cc-switch
-ccm init
-
-# 2. Browse & switch with arrow keys
-ccm ls
-
-# 3. Or switch directly
-ccm use OpenRouter
+ccm init   # Auto-detects cc-switch or initializes standalone mode
+ccm ls     # Browse & switch
 ```
 
 ## 🔌 cc-switch Integration

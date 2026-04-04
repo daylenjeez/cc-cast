@@ -43,14 +43,8 @@ cd ccm && npm install && npm run build && npm link
 ## 🚀 快速开始
 
 ```bash
-# 1. 初始化 — 自动检测 cc-switch
-ccm init
-
-# 2. 方向键浏览并切换
-ccm ls
-
-# 3. 或直接按名称切换
-ccm use OpenRouter
+ccm init   # 自动检测 cc-switch 或初始化独立模式
+ccm ls     # 选择并切换
 ```
 
 ## 🔌 cc-switch 集成
