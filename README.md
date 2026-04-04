@@ -12,32 +12,11 @@ Switch Claude Code custom model configurations from the terminal in seconds.
 
 [中文文档](./README.zh-CN.md) | English
 
-[Demo](#-demo) · [Install](#-install) · [Quick Start](#-quick-start) · [Commands](#-commands) · [How It Works](#%EF%B8%8F-how-it-works)
+[Install](#-install) · [Quick Start](#-quick-start) · [Commands](#-commands) · [How It Works](#%EF%B8%8F-how-it-works)
 
 </div>
 
 ---
-
-## 🎬 Demo
-
-```bash
-$ ccm ls
-
-● 1. OpenRouter
-     Model: anthropic/claude-opus-4.6  URL: https://openrouter.ai/api/v1
-  2. Azure
-     Model: claude-opus-4.6           URL: https://my-endpoint.openai.azure.com
-  3. Kimi
-     Model: kimi-k2.5                 URL: https://api.moonshot.cn/anthropic
-
-Enter number to switch (Enter to skip): 2
-
-✓ Switched to Azure
-  Model: claude-opus-4.6
-  Restart Claude Code to apply
-```
-
-> Tip: In a real terminal, `ccm ls` shows an interactive arrow-key selector via [@clack/prompts](https://github.com/bombshell-dev/clack).
 
 ## ✨ Highlights
 

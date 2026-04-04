@@ -12,32 +12,11 @@
 
 English | [中文文档](./README.zh-CN.md)
 
-[演示](#-演示) · [安装](#-安装) · [快速开始](#-快速开始) · [命令一览](#-命令一览) · [工作原理](#%EF%B8%8F-工作原理)
+[安装](#-安装) · [快速开始](#-快速开始) · [命令一览](#-命令一览) · [工作原理](#%EF%B8%8F-工作原理)
 
 </div>
 
 ---
-
-## 🎬 演示
-
-```bash
-$ ccm ls
-
-● 1. OpenRouter
-     模型: anthropic/claude-opus-4.6  来源: https://openrouter.ai/api/v1
-  2. Azure
-     模型: claude-opus-4.6           来源: https://my-endpoint.openai.azure.com
-  3. Kimi
-     模型: kimi-k2.5                 来源: https://api.moonshot.cn/anthropic
-
-输入序号切换 (回车跳过): 2
-
-✓ 已切换到 Azure
-  模型: claude-opus-4.6
-  重启 Claude Code 生效
-```
-
-> 提示：在真实终端中，`ccm ls` 会显示交互式方向键选择器（基于 [@clack/prompts](https://github.com/bombshell-dev/clack)）。
 
 ## ✨ 亮点
 
