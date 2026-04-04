@@ -233,10 +233,9 @@ program
         const env = (p.settingsConfig.env || {}) as Record<string, string>;
         const model = env["ANTHROPIC_MODEL"] || "N/A";
         const baseUrl = env["ANTHROPIC_BASE_URL"] || "default";
-        const marker = isCurrent ? "● " : "";
         const tag = isCurrent ? ` ${t("list.current_marker")}` : "";
         return {
-          label: `${marker}${p.name}${tag}`,
+          label: `${p.name}${tag}`,
           hint: `${t("common.model")}: ${model}  ${t("common.source")}: ${baseUrl}`,
           value: p.name,
         };
@@ -652,9 +651,8 @@ localeCmd
     if (isInteractive) {
       const options = SUPPORTED_LOCALES.map(({ code, label }) => {
         const isCurrent = code === current;
-        const marker = isCurrent ? "● " : "";
         const tag = isCurrent ? ` ${t("locale.list_current_marker")}` : "";
-        return { label: `${marker}${code} - ${label}${tag}`, value: code };
+        return { label: `${code} - ${label}${tag}`, value: code };
       });
 
       const selected = await clack.select({
