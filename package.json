@@ -1,6 +1,6 @@
 {
   "name": "ccm-cli",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Claude Code Model Switcher - 快速切换 Claude Code 自定义模型配置",
   "type": "module",
   "main": "dist/index.js",
