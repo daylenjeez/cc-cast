@@ -524,13 +524,69 @@ program
     console.log();
   });
 
-// ccm remove <name>
+// ccm remove [name]
 program
-  .command("remove <name>")
+  .command("remove [name]")
   .alias("rm")
   .description(t("remove.description"))
-  .action(async (name: string) => {
+  .action(async (name?: string) => {
     const store = ensureStore();
+    const profiles = store.list();
+    const current = store.getCurrent();
+
+    if (!name) {
+      if (profiles.length === 0) {
+        console.log(chalk.yellow(t("list.empty")));
+        return;
+      }
+
+      const isInteractive = process.stdin.isTTY && process.stdout.isTTY;
+
+      if (isInteractive) {
+        const options = profiles.map((p) => {
+          const isCurrent = p.name === current;
+          const env = (p.settingsConfig.env || {}) as Record<string, string>;
+          const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
+          const tag = isCurrent ? ` ${t("list.current_marker")}` : "";
+          return {
+            label: `${p.name}${tag}`,
+            hint: `${t("common.model")}: ${model}`,
+            value: p.name,
+          };
+        });
+
+        const selected = await clack.select({
+          message: t("remove.select"),
+          options,
+        });
+
+        if (clack.isCancel(selected)) {
+          clack.cancel(t("list.cancelled"));
+          return;
+        }
+        name = selected as string;
+      } else {
+        console.log(chalk.bold(`\n${t("list.header")}\n`));
+        profiles.forEach((p, i) => {
+          const isCurrent = p.name === current;
+          const marker = isCurrent ? chalk.green("● ") : "  ";
+          const label = isCurrent ? chalk.green.bold(p.name) : p.name;
+          const env = (p.settingsConfig.env || {}) as Record<string, string>;
+          const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
+          console.log(`${marker}${chalk.gray(`${i + 1}.`)} ${label}`);
+          console.log(`     ${t("common.model")}: ${chalk.cyan(model)}`);
+        });
+        console.log();
+        const input = await ask(t("list.choose_number"));
+        if (!input) return;
+        const idx = parseInt(input, 10) - 1;
+        if (isNaN(idx) || idx < 0 || idx >= profiles.length) {
+          console.log(chalk.red(t("error.invalid_choice")));
+          return;
+        }
+        name = profiles[idx].name;
+      }
+    }
 
     const profile = resolveProfile(store, name);
     if (!profile) return;

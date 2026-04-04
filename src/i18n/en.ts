@@ -68,6 +68,7 @@ const en: Record<TranslationKey, string> = {
 
   // remove
   "remove.description": "Delete a configuration",
+  "remove.select": "Select configuration to delete:",
   "remove.confirm": 'Delete "{name}"? (y/N) ',
   "remove.done": '✓ Deleted "{name}"',
 

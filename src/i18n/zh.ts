@@ -66,6 +66,7 @@ const zh = {
 
   // remove
   "remove.description": "删除配置方案",
+  "remove.select": "选择要删除的配置:",
   "remove.confirm": '确认删除 "{name}"？(y/N) ',
   "remove.done": '✓ 已删除 "{name}"',
 
