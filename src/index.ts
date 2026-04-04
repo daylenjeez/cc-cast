@@ -25,14 +25,19 @@ program
   .description(t("program.description"))
   .version(packageJson.version);
 
-// Helper: prompt user for input
-function ask(question: string): Promise<string> {
+// Helper: prompt user for input, optionally pre-filling the input field
+function ask(question: string, prefill?: string): Promise<string> {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   return new Promise((resolve) => {
     rl.question(question, (answer) => {
       rl.close();
       resolve(answer.trim());
     });
+    if (prefill) {
+      (rl as any).line = prefill;
+      (rl as any).cursor = prefill.length;
+      (rl as any)._refreshLine();
+    }
   });
 }
 
@@ -430,12 +435,19 @@ program
     console.log();
   });
 
-// ccm use <name>
+// ccm use [name]
 program
-  .command("use <name>")
+  .command("use [name]")
   .description(t("use.description"))
-  .action(async (name: string) => {
+  .action(async (name?: string) => {
     const store = ensureStore();
+
+    if (!name) {
+      // No argument: behave like `ls`
+      await program.commands.find((c) => c.name() === "list")!.parseAsync([]);
+      return;
+    }
+
     const profile = await resolveProfile(store, name);
     if (!profile) return;
 
@@ -509,6 +521,19 @@ async function saveAndSwitch(store: ReturnType<typeof ensureStore>, name: string
   }
 }
 
+const BUILTIN_BASE_URLS: Record<string, string> = {
+  kimi: "https://api.moonshot.cn/v1",
+  "kimi-coding": "https://api.kimi.com/coding/",
+  openrouter: "https://openrouter.ai/api/v1",
+  deepseek: "https://api.deepseek.com",
+  zenmux: "https://zenmux.ai/api/anthropic",
+  fusecode: "https://www.fusecode.cc",
+};
+
+function getKnownBaseUrl(name: string): string | undefined {
+  return BUILTIN_BASE_URLS[name.toLowerCase()];
+}
+
 // ccm add
 program
   .command("add")
@@ -544,7 +569,7 @@ program
       // JSON mode: open editor with template
       const template: Record<string, unknown> = {
         env: {
-          ANTHROPIC_BASE_URL: "",
+          ANTHROPIC_BASE_URL: getKnownBaseUrl(name) ?? "",
           ANTHROPIC_AUTH_TOKEN: "",
           ANTHROPIC_MODEL: "",
           ANTHROPIC_DEFAULT_OPUS_MODEL: "",
@@ -562,9 +587,10 @@ program
     }
 
     // Interactive mode with step-based back support
-    interface Step { key: string; prompt: string; required: boolean; }
+    const defaultBaseUrl = getKnownBaseUrl(name);
+    interface Step { key: string; prompt: string; required: boolean; defaultValue?: string; }
     const steps: Step[] = [
-      { key: "ANTHROPIC_BASE_URL", prompt: t("add.prompt_base_url"), required: true },
+      { key: "ANTHROPIC_BASE_URL", prompt: t("add.prompt_base_url"), required: true, defaultValue: defaultBaseUrl },
       { key: "ANTHROPIC_AUTH_TOKEN", prompt: t("add.prompt_auth_token"), required: true },
       { key: "ANTHROPIC_MODEL", prompt: t("add.prompt_model"), required: false },
       { key: "ANTHROPIC_DEFAULT_OPUS_MODEL", prompt: t("add.prompt_default_opus"), required: false },
@@ -577,19 +603,24 @@ program
     let i = 0;
     while (i < steps.length) {
       const step = steps[i];
-      const input = await ask(step.prompt);
+      const promptText = step.defaultValue
+        ? `${step.prompt}(${chalk.gray(step.defaultValue)}): `
+        : step.prompt;
+      const input = await ask(promptText, step.defaultValue);
 
       if (input === "<") {
         if (i > 0) i--;
         continue;
       }
 
-      if (step.required && !input) {
+      const value = input || step.defaultValue || "";
+
+      if (step.required && !value) {
         console.log(chalk.red(t("add.field_required", { field: step.key })));
         continue;
       }
 
-      if (input) values[step.key] = input;
+      if (value) values[step.key] = value;
       else delete values[step.key];
       i++;
     }
@@ -751,9 +782,10 @@ program
       let i = 0;
       while (i < steps.length) {
         const step = steps[i];
-        const cur = currentEnv[step.key] || "";
-        const hint = cur ? chalk.gray(` [${cur}]`) : "";
-        const input = await ask(`${step.prompt}${hint}: `);
+        const cur = currentEnv[step.key]
+          || (step.key === "ANTHROPIC_BASE_URL" ? (getKnownBaseUrl(profile.name) ?? "") : "");
+        const hint = cur ? `(${chalk.gray(cur)})` : "";
+        const input = await ask(`${step.prompt}${hint}: `, cur || undefined);
 
         if (input === "<") {
           if (i > 0) i--;

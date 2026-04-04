@@ -15,8 +15,8 @@ function detectLocale(): Locale {
   const lang = process.env.LC_ALL || process.env.LANG || "";
   if (lang.startsWith("en")) return "en";
 
-  // 3. Default to Chinese
-  return "zh";
+  // 3. Default to English
+  return "en";
 }
 
 let currentLocale: Locale | undefined;
@@ -32,7 +32,7 @@ export function setLocale(locale: Locale): void {
 
 export function t(key: TranslationKey, vars?: Record<string, string>): string {
   const locale = getLocale();
-  let text = locales[locale][key] ?? locales.zh[key] ?? key;
+  let text = locales[locale][key] ?? locales.en[key] ?? key;
   if (vars) {
     for (const [k, v] of Object.entries(vars)) {
       text = text.replace(new RegExp(`\\{${k}\\}`, "g"), v);
