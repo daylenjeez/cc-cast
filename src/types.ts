@@ -14,7 +14,6 @@ export interface DataStore {
 }
 
 export interface RcConfig {
-  mode: "cc-switch" | "standalone";
   aliases?: Record<string, string>;
   locale?: "zh" | "en";
 }

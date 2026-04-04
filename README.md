@@ -52,17 +52,17 @@ ccm add    # Interactive wizard to add a provider
 
 ## 🔌 cc-switch Integration
 
-Already using [cc-switch](https://github.com/farion1231/cc-switch)? ccm reads its SQLite database directly:
+Already using [cc-switch](https://github.com/farion1231/cc-switch)? ccm can sync its configurations into standalone storage:
 
 ```bash
 $ ccm init
 cc-switch detected. Import configurations from it? (Y/n)
-✓ Initialized in cc-switch mode
-✓ Imported 4 configurations
+✓ Initialized
+✓ Synced 4 configurations
 Active: OpenRouter
 ```
 
-All configs sync both ways — add in ccm, see it in cc-switch UI, and vice versa.
+You can also run `ccm sync` at any time to pull the latest cc-switch configurations into `~/.ccm/config.json`.
 
 ## ➕ Adding Configurations
 
@@ -132,7 +132,8 @@ Aliases are stored in `~/.ccm/rc.json`:
 | `ccm modify [name]` | `edit` | Edit existing configuration |
 | `ccm remove [name]` | `rm` | Interactive or named delete |
 | `ccm current` | | Show active configuration |
-| `ccm config` | | Switch storage mode |
+| `ccm config` | | View data source mode (deprecated) |
+| `ccm sync` | | Sync cc-switch configs into standalone |
 
 ### Aliases
 

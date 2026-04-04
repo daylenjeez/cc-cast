@@ -21,18 +21,10 @@ const zh = {
   // init
   "init.description": "初始化 ccm",
   "init.cc_switch_found":"检测到 cc-switch 已安装，是否从中导入配置？(Y/n) ",
-  "init.imported": "✓ 已导入 {count} 个配置",
-  "init.current": "当前激活: {name}",
-  "init.no_current": "当前无激活配置",
-  "init.done_cc_switch": "✓ 已初始化为 cc-switch 模式",
-  "init.done_standalone": "✓ 已初始化为独立模式",
+  "init.done": "✓ 初始化完成",
 
   // config
-  "config.description": "查看或切换数据源模式",
-  "config.current_mode": "当前模式: {mode}",
-  "config.switch_confirm": "是否切换模式？(y/N) ",
-  "config.cc_switch_not_installed": "cc-switch 未安装",
-  "config.switched": "✓ 已切换为 {mode} 模式",
+  "config.description": "查看数据源模式（已废弃）",
 
   // list
   "list.description": "列出并选择配置方案",
@@ -40,7 +32,6 @@ const zh = {
   "list.header": "可用配置:",
   "list.select": "选择配置:",
   "list.current_marker": "(当前)",
-  "list.cancelled": "已取消",
   "list.choose_number": "输入序号切换 (回车跳过): ",
 
   // current
@@ -134,6 +125,15 @@ const zh = {
   "alias.rm_alias": "别名 {name}",
   "alias.rm_config": "配置 {target}",
   "alias.rm_choose": "请选择 (1/2): ",
+
+  // sync
+  "sync.description": "从 cc-switch 同步配置",
+  "sync.no_cc_switch": "未检测到 cc-switch 数据库",
+  "sync.empty": "cc-switch 中没有找到 Claude 配置",
+  "sync.done": "✓ 已同步 {count} 个配置",
+  "sync.current": "当前激活: {name}",
+  "sync.no_current": "当前无激活配置",
+  "sync.prompt_alias": "为当前配置设置别名（回车跳过）: ",
 
   // store errors
   "store.db_not_found": "cc-switch 数据库不存在: {path}",

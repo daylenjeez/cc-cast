@@ -172,30 +172,39 @@ program
   .command("init")
   .description(t("init.description"))
   .action(async () => {
+    const rc = readRc();
+    writeRc({ aliases: rc?.aliases, locale: rc?.locale });
+    console.log(chalk.green(t("init.done")));
+
     if (ccSwitchExists()) {
       const use = await ask(t("init.cc_switch_found"));
       if (use.toLowerCase() !== "n") {
-        writeRc({ mode: "cc-switch" });
         const { CcSwitchStore } = await import("./store/cc-switch.js");
-        const store = new CcSwitchStore();
-        const profiles = store.list();
-        const current = store.getCurrent();
-        console.log(chalk.green(t("init.done_cc_switch")));
-        console.log(chalk.green(t("init.imported", { count: String(profiles.length) })));
-        if (current) {
-          console.log(chalk.gray(t("init.current", { name: current })));
-        } else {
-          console.log(chalk.gray(t("init.no_current")));
+        const { StandaloneStore } = await import("./store/standalone.js");
+        const ccStore = new CcSwitchStore();
+        const standaloneStore = new StandaloneStore();
+        const profiles = ccStore.list();
+        const current = ccStore.getCurrent();
+
+        for (const profile of profiles) {
+          standaloneStore.save(profile.name, profile.settingsConfig);
         }
-        return;
+        if (current) {
+          standaloneStore.setCurrent(current);
+        }
+
+        console.log(chalk.green(t("sync.done", { count: String(profiles.length) })));
+        if (current) {
+          console.log(chalk.gray(t("sync.current", { name: current })));
+        } else {
+          console.log(chalk.gray(t("sync.no_current")));
+        }
+        ccStore.close();
       }
     }
-
-    writeRc({ mode: "standalone" });
-    console.log(chalk.green(t("init.done_standalone")));
   });
 
-// ccm config
+// ccm config (deprecated, kept for compatibility)
 program
   .command("config")
   .description(t("config.description"))
@@ -205,17 +214,55 @@ program
       console.log(chalk.yellow(t("common.not_init")));
       return;
     }
-    console.log(t("config.current_mode", { mode: chalk.cyan(rc.mode) }));
-    const confirm = await ask(t("config.switch_confirm"));
-    if (confirm.toLowerCase() === "y") {
-      const newMode = rc.mode === "cc-switch" ? "standalone" : "cc-switch";
-      if (newMode === "cc-switch" && !ccSwitchExists()) {
-        console.log(chalk.red(t("config.cc_switch_not_installed")));
-        return;
-      }
-      writeRc({ mode: newMode });
-      console.log(chalk.green(t("config.switched", { mode: newMode })));
+    console.log(chalk.gray("ccm now only uses standalone mode. No configuration needed."));
+  });
+
+// ccm sync
+program
+  .command("sync")
+  .description(t("sync.description"))
+  .action(async () => {
+    if (!ccSwitchExists()) {
+      console.log(chalk.red(t("sync.no_cc_switch")));
+      return;
     }
+    const { CcSwitchStore } = await import("./store/cc-switch.js");
+    const { StandaloneStore } = await import("./store/standalone.js");
+    const ccStore = new CcSwitchStore();
+    const standaloneStore = new StandaloneStore();
+
+    const profiles = ccStore.list();
+    if (profiles.length === 0) {
+      console.log(chalk.yellow(t("sync.empty")));
+      ccStore.close();
+      return;
+    }
+
+    for (const profile of profiles) {
+      standaloneStore.save(profile.name, profile.settingsConfig);
+    }
+
+    const current = ccStore.getCurrent();
+    if (current) {
+      standaloneStore.setCurrent(current);
+    }
+
+    console.log(chalk.green(t("sync.done", { count: String(profiles.length) })));
+    if (current) {
+      console.log(chalk.gray(t("sync.current", { name: current })));
+      const alias = await ask(t("sync.prompt_alias"));
+      if (alias) {
+        const rc2 = readRc();
+        writeRc({
+          aliases: { ...(rc2?.aliases || {}), [alias]: current },
+          locale: rc2?.locale,
+        });
+      }
+    } else {
+      console.log(chalk.gray(t("sync.no_current")));
+    }
+
+    ccStore.close();
   });
 
 // ccm list
@@ -270,8 +317,7 @@ program
       });
 
       if (clack.isCancel(selected)) {
-        clack.cancel(t("list.cancelled"));
-        return;
+        process.exit(0);
       }
       switchTo(selected as string);
     } else {
@@ -583,8 +629,7 @@ program
         });
 
         if (clack.isCancel(selected)) {
-          clack.cancel(t("list.cancelled"));
-          return;
+          process.exit(0);
         }
         name = selected as string;
       } else {
@@ -741,8 +786,7 @@ program
         });
 
         if (clack.isCancel(selected)) {
-          clack.cancel(t("list.cancelled"));
-          return;
+          process.exit(0);
         }
         name = selected as string;
       } else {
@@ -916,7 +960,8 @@ localeCmd
         initialValue: current,
       });
 
-      if (clack.isCancel(selected) || selected === current) return;
+      if (clack.isCancel(selected)) process.exit(0);
+      if (selected === current) return;
       switchLocale(selected as string);
     } else {
       console.log(chalk.bold(`\n${t("locale.list_header")}\n`));

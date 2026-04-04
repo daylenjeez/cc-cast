@@ -23,18 +23,10 @@ const en: Record<TranslationKey, string> = {
   // init
   "init.description": "Initialize ccm",
   "init.cc_switch_found":"cc-switch detected. Import configurations from it? (Y/n) ",
-  "init.imported": "✓ Imported {count} configurations",
-  "init.current": "Active: {name}",
-  "init.no_current": "No active configuration",
-  "init.done_cc_switch": "✓ Initialized in cc-switch mode",
-  "init.done_standalone": "✓ Initialized in standalone mode",
+  "init.done": "✓ Initialized",
 
   // config
-  "config.description": "View or switch data source mode",
-  "config.current_mode": "Current mode: {mode}",
-  "config.switch_confirm": "Switch mode? (y/N) ",
-  "config.cc_switch_not_installed": "cc-switch is not installed",
-  "config.switched": "✓ Switched to {mode} mode",
+  "config.description": "View data source mode (deprecated)",
 
   // list
   "list.description": "List and select configurations",
@@ -42,7 +34,6 @@ const en: Record<TranslationKey, string> = {
   "list.header": "Available configurations:",
   "list.select": "Select configuration:",
   "list.current_marker": "(current)",
-  "list.cancelled": "Cancelled",
   "list.choose_number": "Enter number to switch (Enter to skip): ",
 
   // current
@@ -136,6 +127,15 @@ const en: Record<TranslationKey, string> = {
   "alias.rm_alias": "Alias {name}",
   "alias.rm_config": "Config {target}",
   "alias.rm_choose": "Choose (1/2): ",
+
+  // sync
+  "sync.description": "Sync configurations from cc-switch",
+  "sync.no_cc_switch": "cc-switch database not detected",
+  "sync.empty": "No Claude configurations found in cc-switch",
+  "sync.done": "✓ Synced {count} configurations",
+  "sync.current": "Active: {name}",
+  "sync.no_current": "No active configuration",
+  "sync.prompt_alias": "Set alias for current config (Enter to skip): ",
 
   // store errors
   "store.db_not_found": "cc-switch database not found: {path}",

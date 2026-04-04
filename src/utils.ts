@@ -3,7 +3,6 @@ import { join } from "path";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
 import type { RcConfig } from "./types.js";
 import type { DataStore } from "./store/interface.js";
-import { CcSwitchStore } from "./store/cc-switch.js";
 import { StandaloneStore } from "./store/standalone.js";
 
 const CCM_DIR = join(homedir(), ".ccm");
@@ -26,12 +25,6 @@ export function writeRc(rc: RcConfig): void {
 }
 
 export function getStore(): DataStore | null {
-  const rc = readRc();
-  if (!rc) return null;
-
-  if (rc.mode === "cc-switch") {
-    return new CcSwitchStore();
-  } else {
-    return new StandaloneStore();
-  }
+  if (!existsSync(RC_PATH)) return null;
+  return new StandaloneStore();
 }

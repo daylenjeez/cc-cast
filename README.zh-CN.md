@@ -52,17 +52,17 @@ ccm add    # 交互式向导添加供应商
 
 ## 🔌 cc-switch 集成
 
-已经在用 [cc-switch](https://github.com/farion1231/cc-switch)？ccm 直接读取它的 SQLite 数据库：
+已经在用 [cc-switch](https://github.com/farion1231/cc-switch)？ccm 可以将它的配置同步到本地：
 
 ```bash
 $ ccm init
 检测到 cc-switch 已安装，是否从中导入配置？(Y/n)
-✓ 已初始化为 cc-switch 模式
-✓ 已导入 4 个配置
+✓ 初始化完成
+✓ 已同步 4 个配置
 当前激活: OpenRouter
 ```
 
-双向同步 — 在 ccm 中添加的配置在 cc-switch UI 中也能看到，反之亦然。
+你也可以随时运行 `ccm sync` 将最新的 cc-switch 配置同步到 `~/.ccm/config.json`。
 
 ## ➕ 添加配置
 
@@ -132,7 +132,8 @@ ANTHROPIC_DEFAULT_HAIKU_MODEL (可选):
 | `ccm modify [name]` | `edit` | 修改已有配置 |
 | `ccm remove [name]` | `rm` | 交互式或指定名称删除 |
 | `ccm current` | | 显示当前激活配置 |
-| `ccm config` | | 切换存储模式 |
+| `ccm config` | | 查看数据源模式（已废弃） |
+| `ccm sync` | | 从 cc-switch 同步配置到本地 |
 
 ### 别名管理
 
