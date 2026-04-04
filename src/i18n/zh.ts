@@ -143,7 +143,6 @@ const zh = {
   "clear.clear_env": "是否同时清除 ~/.claude/settings.json 中的 env 配置？(y/N) ",
   "clear.env_cleared": "✓ 已清除 env 配置",
   "clear.done": "✓ 清理完成",
-  "clear.npm_remove": "提示：如需移除 CLI，请手动运行 npm uninstall -g @daylenjeez/ccm-switch",
 
   // store errors
   "store.db_not_found": "cc-switch 数据库不存在: {path}",

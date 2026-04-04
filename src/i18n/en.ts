@@ -145,7 +145,6 @@ const en: Record<TranslationKey, string> = {
   "clear.clear_env": "Also clear env config in ~/.claude/settings.json? (y/N) ",
   "clear.env_cleared": "✓ Cleared env config",
   "clear.done": "✓ Cleanup complete",
-  "clear.npm_remove": "Tip: to remove the CLI, run npm uninstall -g @daylenjeez/ccm-switch",
 
   // store errors
   "store.db_not_found": "cc-switch database not found: {path}",

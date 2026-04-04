@@ -301,7 +301,6 @@ program
     }
 
     console.log(chalk.green(t("clear.done")));
-    console.log(chalk.gray(t("clear.npm_remove")));
   });
 
 // ccm list
