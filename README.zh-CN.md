@@ -64,7 +64,7 @@ $ ccm init
 
 你也可以随时运行 `ccm sync` 将最新的 cc-switch 配置同步到 `~/.ccm/config.json`。
 
-> ⚠️ **已知问题**：同时使用两个工具时，当 `~/.claude/settings.json` 发生变化，cc-switch GUI 界面可能会刷新/抖动。这是正常现象，因为 cc-switch 会监控该文件的变化。如果抖动干扰使用，建议在使用 `ccm` 时关闭 cc-switch，或者完全使用 `ccm` 管理配置。
+> ⚠️ **已知问题**：ccm 修改 `~/.claude/settings.json` 后，cc-switch 会自动将该内容同步回数据库，覆盖当前 provider 的 `settings_config`。如果两个工具中的配置不一致，cc-switch 中存储的原始配置将被修改。
 
 ## ➕ 添加配置
 

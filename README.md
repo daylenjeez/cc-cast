@@ -64,7 +64,7 @@ Active: OpenRouter
 
 You can also run `ccm sync` at any time to pull the latest cc-switch configurations into `~/.ccm/config.json`.
 
-> ⚠️ **Known Issue**: When using both tools simultaneously, the cc-switch GUI may refresh/flicker when `~/.claude/settings.json` changes. This is expected behavior as cc-switch monitors the file for changes. If the flicker is distracting, consider closing cc-switch while using `ccm`, or use `ccm` exclusively for configuration management.
+> ⚠️ **Known Issue**: After ccm modifies `~/.claude/settings.json`, cc-switch will automatically sync the content back to its database, overwriting the current provider's `settings_config`. If the configurations differ between the two tools, the original configuration stored in cc-switch will be modified.
 
 ## ➕ Adding Configurations
 
