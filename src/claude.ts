@@ -9,7 +9,7 @@ export function readClaudeSettings(): Record<string, unknown> {
   return JSON.parse(readFileSync(SETTINGS_PATH, "utf-8"));
 }
 
-export function applyProfile(settingsConfig: Record<string, unknown>): void {
+export function applyProfile(_name: string, settingsConfig: Record<string, unknown>): void {
   const current = readClaudeSettings();
 
   // 保留用户级字段，用 profile 的配置覆盖

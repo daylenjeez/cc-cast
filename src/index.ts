@@ -292,8 +292,8 @@ program
     const switchTo = (name: string) => {
       if (name === current) return;
       const profile = store.get(name)!;
-      applyProfile(profile.settingsConfig);
       store.setCurrent(profile.name);
+      applyProfile(profile.name, profile.settingsConfig);
       const env = (profile.settingsConfig.env || {}) as Record<string, string>;
       const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
       console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
@@ -394,8 +394,8 @@ program
     const profile = await resolveProfile(store, name);
     if (!profile) return;
 
-    applyProfile(profile.settingsConfig);
     store.setCurrent(profile.name);
+    applyProfile(profile.name, profile.settingsConfig);
 
     const env = (profile.settingsConfig.env || {}) as Record<string, string>;
     const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
@@ -457,8 +457,8 @@ async function saveAndSwitch(store: ReturnType<typeof ensureStore>, name: string
 
   const switchChoice = await ask(t("add.switch_confirm"));
   if (switchChoice.toLowerCase() !== "n") {
-    applyProfile(settingsConfig);
     store.setCurrent(name);
+    applyProfile(name, settingsConfig);
     console.log(chalk.green(t("use.done", { name: chalk.bold(name) })));
     console.log(chalk.gray(`  ${t("use.restart")}`));
   }
@@ -746,13 +746,13 @@ program
     if (profile.name !== current) {
       const switchChoice = await ask(t("add.switch_confirm"));
       if (switchChoice.toLowerCase() !== "n") {
-        applyProfile(settingsConfig);
         store.setCurrent(profile.name);
+        applyProfile(profile.name, settingsConfig);
         console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
         console.log(chalk.gray(`  ${t("use.restart")}`));
       }
     } else {
-      applyProfile(settingsConfig);
+      applyProfile(profile.name, settingsConfig);
       console.log(chalk.gray(`  ${t("use.restart")}`));
     }
   });
