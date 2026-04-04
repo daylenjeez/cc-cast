@@ -11,7 +11,7 @@ import { writeFileSync, readFileSync, unlinkSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { t, setLocale } from "./i18n/index.js";
-import prompts from "prompts";
+import * as clack from "@clack/prompts";
 
 const program = new Command();
 
@@ -228,35 +228,32 @@ program
     const isInteractive = process.stdin.isTTY && process.stdout.isTTY;
 
     if (isInteractive) {
-      const choices = profiles.map((p) => {
+      const options = profiles.map((p) => {
         const isCurrent = p.name === current;
         const env = (p.settingsConfig.env || {}) as Record<string, string>;
         const model = env["ANTHROPIC_MODEL"] || "N/A";
         const baseUrl = env["ANTHROPIC_BASE_URL"] || "default";
-        const marker = isCurrent ? chalk.green("● ") : "  ";
-        const label = isCurrent ? chalk.green.bold(p.name) : p.name;
-        const tag = isCurrent ? chalk.gray(` ${t("list.current_marker")}`) : "";
+        const marker = isCurrent ? "● " : "";
+        const tag = isCurrent ? ` ${t("list.current_marker")}` : "";
         return {
-          title: `${marker}${label}${tag}`,
-          description: `${t("common.model")}: ${model}  ${t("common.source")}: ${baseUrl}`,
+          label: `${marker}${p.name}${tag}`,
+          hint: `${t("common.model")}: ${model}  ${t("common.source")}: ${baseUrl}`,
           value: p.name,
         };
       });
 
       const initial = profiles.findIndex((p) => p.name === current);
-      const response = await prompts({
-        type: "select",
-        name: "name",
+      const selected = await clack.select({
         message: t("list.select"),
-        choices,
-        initial: initial >= 0 ? initial : 0,
+        options,
+        initialValue: initial >= 0 ? profiles[initial].name : profiles[0].name,
       });
 
-      if (!response.name) {
-        console.log(chalk.gray(t("list.cancelled")));
+      if (clack.isCancel(selected)) {
+        clack.cancel(t("list.cancelled"));
         return;
       }
-      switchTo(response.name);
+      switchTo(selected as string);
     } else {
       // Fallback: numbered list + type to select
       console.log(chalk.bold(`\n${t("list.header")}\n`));
@@ -653,25 +650,21 @@ localeCmd
     const isInteractive = process.stdin.isTTY && process.stdout.isTTY;
 
     if (isInteractive) {
-      const choices = SUPPORTED_LOCALES.map(({ code, label }) => {
+      const options = SUPPORTED_LOCALES.map(({ code, label }) => {
         const isCurrent = code === current;
-        const marker = isCurrent ? chalk.green("● ") : "  ";
-        const name = isCurrent ? chalk.green.bold(`${code} - ${label}`) : `${code} - ${label}`;
-        const tag = isCurrent ? chalk.gray(` ${t("locale.list_current_marker")}`) : "";
-        return { title: `${marker}${name}${tag}`, value: code };
+        const marker = isCurrent ? "● " : "";
+        const tag = isCurrent ? ` ${t("locale.list_current_marker")}` : "";
+        return { label: `${marker}${code} - ${label}${tag}`, value: code };
       });
 
-      const initial = SUPPORTED_LOCALES.findIndex((l) => l.code === current);
-      const response = await prompts({
-        type: "select",
-        name: "code",
+      const selected = await clack.select({
         message: t("locale.select"),
-        choices,
-        initial: initial >= 0 ? initial : 0,
+        options,
+        initialValue: current,
       });
 
-      if (!response.code || response.code === current) return;
-      switchLocale(response.code);
+      if (clack.isCancel(selected) || selected === current) return;
+      switchLocale(selected as string);
     } else {
       console.log(chalk.bold(`\n${t("locale.list_header")}\n`));
       SUPPORTED_LOCALES.forEach(({ code, label }, i) => {
