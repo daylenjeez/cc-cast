@@ -69,35 +69,54 @@ $ ccm init
 
 ## ➕ 添加配置
 
-### 交互式向导（推荐）
+三种方式添加供应商配置：
 
-```bash
+### 1. 交互式向导（推荐）
+
+运行 `ccm add`，按提示操作：
+
+```
 $ ccm add
+```
+
+**第一步** — 输入供应商名称，选择输入方式：
+
+```
 供应商名称 (如 OpenRouter): OpenRouter
-ANTHROPIC_BASE_URL: https://openrouter.ai/api/v1
-ANTHROPIC_AUTH_TOKEN: sk-or-xxx
-ANTHROPIC_MODEL: anthropic/claude-opus-4.6
-ANTHROPIC_DEFAULT_OPUS_MODEL (回车跳过):
-ANTHROPIC_DEFAULT_SONNET_MODEL (回车跳过):
-ANTHROPIC_DEFAULT_HAIKU_MODEL (回车跳过):
 
-配置预览:
-{ ... }
+选择添加方式:
+  1) 逐步填写
+  2) 直接编写 JSON
+请选择 (1/2): 1
+```
 
-是否在编辑器中编辑配置？(y/N)
+**第二步** — 逐步填写配置字段（输入 `<` 返回上一步）：
+
+| 字段 | 必填 | 示例 |
+|---|---|---|
+| `ANTHROPIC_BASE_URL` | ✅ | `https://openrouter.ai/api/v1` |
+| `ANTHROPIC_AUTH_TOKEN` | ✅ | `sk-or-xxx` |
+| `ANTHROPIC_MODEL` | ✅ | `anthropic/claude-opus-4.6` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | | `Claude Opus 4.6` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | | `Claude Sonnet 4.6` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | | `Claude Haiku 4.5` |
+
+**第三步** — 预览配置，可选在 `$EDITOR` 中编辑，保存并切换：
+
+```
 ✓ 已保存配置 "OpenRouter"
 是否立即切换到此配置？(Y/n)
 ```
 
-> 💡 任何步骤输入 `<` 可返回上一步。也可以选择 **"直接编写 JSON"** 在 `$EDITOR` 中编辑。
+### 2. 从当前设置保存
 
-### 从当前设置保存
+已经配好了 Claude Code？一条命令保存为方案：
 
 ```bash
 ccm save my-config
 ```
 
-### 直接编辑配置文件
+### 3. 直接编辑 JSON
 
 独立模式下，编辑 `~/.ccm/config.json`：
 

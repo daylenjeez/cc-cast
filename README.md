@@ -69,35 +69,54 @@ All configs sync both ways — add in ccm, see it in cc-switch UI, and vice vers
 
 ## ➕ Adding Configurations
 
-### Interactive wizard (recommended)
+Three ways to add a provider configuration:
 
-```bash
+### 1. Interactive wizard (recommended)
+
+Run `ccm add` and follow the prompts:
+
+```
 $ ccm add
+```
+
+**Step 1** — Enter provider name and choose input mode:
+
+```
 Provider name (e.g. OpenRouter): OpenRouter
-ANTHROPIC_BASE_URL: https://openrouter.ai/api/v1
-ANTHROPIC_AUTH_TOKEN: sk-or-xxx
-ANTHROPIC_MODEL: anthropic/claude-opus-4.6
-ANTHROPIC_DEFAULT_OPUS_MODEL (press Enter to skip):
-ANTHROPIC_DEFAULT_SONNET_MODEL (press Enter to skip):
-ANTHROPIC_DEFAULT_HAIKU_MODEL (press Enter to skip):
 
-Configuration preview:
-{ ... }
+Choose how to add:
+  1) Step by step
+  2) Write JSON directly
+Choose (1/2): 1
+```
 
-Edit configuration in editor? (y/N)
+**Step 2** — Fill in configuration fields (type `<` to go back):
+
+| Field | Required | Example |
+|---|---|---|
+| `ANTHROPIC_BASE_URL` | ✅ | `https://openrouter.ai/api/v1` |
+| `ANTHROPIC_AUTH_TOKEN` | ✅ | `sk-or-xxx` |
+| `ANTHROPIC_MODEL` | ✅ | `anthropic/claude-opus-4.6` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | | `Claude Opus 4.6` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | | `Claude Sonnet 4.6` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | | `Claude Haiku 4.5` |
+
+**Step 3** — Preview, optionally edit in `$EDITOR`, save & switch:
+
+```
 ✓ Saved configuration "OpenRouter"
 Switch to this configuration now? (Y/n)
 ```
 
-> 💡 Type `<` at any step to go back. Choose **"Write JSON directly"** to edit raw JSON in your `$EDITOR`.
+### 2. Save current settings
 
-### From current settings
+Already have Claude Code configured? Save it as a profile in one command:
 
 ```bash
 ccm save my-config
 ```
 
-### Edit config file directly
+### 3. Edit JSON directly
 
 In standalone mode, edit `~/.ccm/config.json`:
 
