@@ -7,6 +7,7 @@ const en: Record<TranslationKey, string> = {
   // common
   "common.not_init": "Not initialized yet. Run: ccm init",
   "common.model": "Model",
+  "common.model_default": "default",
   "common.source": "Source",
 
   // error

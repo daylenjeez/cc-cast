@@ -219,7 +219,7 @@ program
       applyProfile(profile.settingsConfig);
       store.setCurrent(profile.name);
       const env = (profile.settingsConfig.env || {}) as Record<string, string>;
-      const model = env["ANTHROPIC_MODEL"] || "N/A";
+      const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
       console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
       console.log(`  ${t("common.model")}: ${chalk.cyan(model)}`);
       console.log(chalk.gray(`  ${t("use.restart")}`));
@@ -231,7 +231,7 @@ program
       const options = profiles.map((p) => {
         const isCurrent = p.name === current;
         const env = (p.settingsConfig.env || {}) as Record<string, string>;
-        const model = env["ANTHROPIC_MODEL"] || "N/A";
+        const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
         const baseUrl = env["ANTHROPIC_BASE_URL"] || "default";
         const tag = isCurrent ? ` ${t("list.current_marker")}` : "";
         return {
@@ -261,7 +261,7 @@ program
         const marker = isCurrent ? chalk.green("● ") : "  ";
         const name = isCurrent ? chalk.green.bold(p.name) : p.name;
         const env = (p.settingsConfig.env || {}) as Record<string, string>;
-        const model = env["ANTHROPIC_MODEL"] || "N/A";
+        const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
         const baseUrl = env["ANTHROPIC_BASE_URL"] || "default";
         console.log(`${marker}${chalk.gray(`${i + 1}.`)} ${name}`);
         console.log(`     ${t("common.model")}: ${chalk.cyan(model)}  ${t("common.source")}: ${chalk.gray(baseUrl)}`);
@@ -323,7 +323,7 @@ program
     store.setCurrent(profile.name);
 
     const env = (profile.settingsConfig.env || {}) as Record<string, string>;
-    const model = env["ANTHROPIC_MODEL"] || "N/A";
+    const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
     console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
     console.log(`  ${t("common.model")}: ${chalk.cyan(model)}`);
     console.log(chalk.gray(`  ${t("use.restart")}`));

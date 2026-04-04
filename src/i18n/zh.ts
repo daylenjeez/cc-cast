@@ -5,6 +5,7 @@ const zh = {
   // common
   "common.not_init": "尚未初始化，请先运行: ccm init",
   "common.model": "模型",
+  "common.model_default": "默认",
   "common.source": "来源",
 
   // error
