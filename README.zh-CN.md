@@ -7,7 +7,7 @@
 在终端几秒内完成 Claude Code 自定义模型配置的管理和切换。
 
 [![npm version](https://img.shields.io/npm/v/@daylenjeez/ccm-switch.svg?style=flat-square)](https://www.npmjs.com/package/@daylenjeez/ccm-switch)
-[![license](https://img.shields.io/npm/l/@daylenjeez/ccm-switch.svg?style=flat-square)](https://github.com/daylenjeez/ccm-switch/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/daylenjeez/ccm-switch?style=flat-square)](https://github.com/daylenjeez/ccm-switch/blob/main/LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen?style=flat-square)](https://nodejs.org)
 
 [English](https://github.com/daylenjeez/ccm-switch/blob/main/README.md) | 中文文档
