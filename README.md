@@ -12,9 +12,32 @@ Switch Claude Code custom model configurations from the terminal in seconds.
 
 [中文文档](./README.zh-CN.md) | English
 
+[Demo](#-demo) · [Install](#-install) · [Quick Start](#-quick-start) · [Commands](#-commands) · [How It Works](#%EF%B8%8F-how-it-works)
+
 </div>
 
 ---
+
+## 🎬 Demo
+
+```bash
+$ ccm ls
+
+● 1. OpenRouter
+     Model: anthropic/claude-opus-4.6  URL: https://openrouter.ai/api/v1
+  2. Azure
+     Model: claude-opus-4.6           URL: https://my-endpoint.openai.azure.com
+  3. Kimi
+     Model: kimi-k2.5                 URL: https://api.moonshot.cn/anthropic
+
+Enter number to switch (Enter to skip): 2
+
+✓ Switched to Azure
+  Model: claude-opus-4.6
+  Restart Claude Code to apply
+```
+
+> Tip: In a real terminal, `ccm ls` shows an interactive arrow-key selector via [@clack/prompts](https://github.com/bombshell-dev/clack).
 
 ## ✨ Highlights
 
@@ -47,6 +70,9 @@ ccm init   # Auto-detects cc-switch or initializes standalone mode
 ccm ls     # Browse & switch
 ```
 
+> **Without ccm**: Manually edit `~/.claude/settings.json`, copy-paste API keys, restart, hope the JSON isn't broken.
+> **With ccm**: `ccm use OpenRouter` — done.
+
 ## 🔌 cc-switch Integration
 
 Already using [cc-switch](https://github.com/nicepkg/cc-switch)? ccm reads its SQLite database directly:
@@ -63,48 +89,31 @@ All configs sync both ways — add in ccm, see it in cc-switch UI, and vice vers
 
 ## ➕ Adding Configurations
 
-Two ways to add a provider configuration:
+### Interactive wizard (recommended)
 
-### 1. Interactive wizard (recommended)
-
-Run `ccm add` and follow the prompts:
-
-```
+```bash
 $ ccm add
-```
-
-**Step 1** — Enter provider name and choose input mode:
-
-```
 Provider name (e.g. OpenRouter): OpenRouter
 
 Choose how to add:
-  1) Step by step
-  2) Write JSON directly
-Choose (1/2): 1
-```
+  1) Step by step     # guided prompts, type < to go back
+  2) Write JSON       # opens $EDITOR
 
-**Step 2** — Fill in configuration fields (type `<` to go back):
+ANTHROPIC_BASE_URL: https://openrouter.ai/api/v1
+ANTHROPIC_AUTH_TOKEN: sk-or-xxx
+ANTHROPIC_MODEL: anthropic/claude-opus-4.6
+ANTHROPIC_DEFAULT_OPUS_MODEL (optional):
+ANTHROPIC_DEFAULT_SONNET_MODEL (optional):
+ANTHROPIC_DEFAULT_HAIKU_MODEL (optional):
 
-| Field | Required | Example |
-|---|---|---|
-| `ANTHROPIC_BASE_URL` | ✅ | `https://openrouter.ai/api/v1` |
-| `ANTHROPIC_AUTH_TOKEN` | ✅ | `sk-or-xxx` |
-| `ANTHROPIC_MODEL` | ✅ | `anthropic/claude-opus-4.6` |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | | `Claude Opus 4.6` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | | `Claude Sonnet 4.6` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | | `Claude Haiku 4.5` |
-
-**Step 3** — Preview, optionally edit in `$EDITOR`, save & switch:
-
-```
 ✓ Saved configuration "OpenRouter"
 Switch to this configuration now? (Y/n)
 ```
 
-### 2. Edit JSON directly
+### Edit JSON directly
 
-In standalone mode, edit `~/.ccm/config.json`:
+<details>
+<summary>Standalone mode: <code>~/.ccm/config.json</code></summary>
 
 ```json
 {
@@ -113,15 +122,13 @@ In standalone mode, edit `~/.ccm/config.json`:
       "env": {
         "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1",
         "ANTHROPIC_AUTH_TOKEN": "sk-or-...",
-        "ANTHROPIC_MODEL": "anthropic/claude-opus-4.6",
-        "ANTHROPIC_DEFAULT_OPUS_MODEL": "Claude Opus 4.6",
-        "ANTHROPIC_DEFAULT_SONNET_MODEL": "Claude Sonnet 4.6",
-        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "Claude Haiku 4.5"
+        "ANTHROPIC_MODEL": "anthropic/claude-opus-4.6"
       }
     }
   }
 }
 ```
+</details>
 
 Aliases are stored in `~/.ccm/rc.json`:
 
@@ -145,6 +152,7 @@ Aliases are stored in `~/.ccm/rc.json`:
 | `ccm add` | `new` | Interactive add wizard |
 | `ccm save <name>` | | Save current settings as profile |
 | `ccm show [name]` | | View config details |
+| `ccm modify [name]` | `edit` | Edit existing configuration |
 | `ccm remove [name]` | `rm` | Interactive or named delete |
 | `ccm current` | | Show active configuration |
 | `ccm config` | | Switch storage mode |
@@ -157,10 +165,6 @@ Aliases are stored in `~/.ccm/rc.json`:
 | `ccm alias rm <short>` | Remove alias |
 | `ccm alias list` / `ls` | List all aliases |
 
-### Aliases
-
-Create shortcuts for frequently used configurations:
-
 ```bash
 ccm alias set or OpenRouter
 ccm use or  # same as: ccm use OpenRouter
@@ -172,6 +176,27 @@ ccm use or  # same as: ccm use OpenRouter
 |---|---|
 | `ccm locale` / `ls` | List & switch language |
 | `ccm locale set <lang>` | Set language (`zh` / `en`) |
+
+### Examples
+
+```bash
+# Switch provider
+$ ccm use OpenRouter
+✓ Switched to OpenRouter
+  Model: anthropic/claude-opus-4.6
+  Restart Claude Code to apply
+
+# View current config
+$ ccm current
+Current configuration: OpenRouter
+  ANTHROPIC_BASE_URL: https://openrouter.ai/api/v1
+  ANTHROPIC_MODEL: anthropic/claude-opus-4.6
+  ANTHROPIC_AUTH_TOKEN: sk-or-v1...a3f2
+
+# Save current settings.json as a new profile
+$ ccm save my-backup
+✓ Saved current configuration as "my-backup"
+```
 
 ## ⚙️ How It Works
 

@@ -12,9 +12,32 @@
 
 English | [中文文档](./README.zh-CN.md)
 
+[演示](#-演示) · [安装](#-安装) · [快速开始](#-快速开始) · [命令一览](#-命令一览) · [工作原理](#%EF%B8%8F-工作原理)
+
 </div>
 
 ---
+
+## 🎬 演示
+
+```bash
+$ ccm ls
+
+● 1. OpenRouter
+     模型: anthropic/claude-opus-4.6  来源: https://openrouter.ai/api/v1
+  2. Azure
+     模型: claude-opus-4.6           来源: https://my-endpoint.openai.azure.com
+  3. Kimi
+     模型: kimi-k2.5                 来源: https://api.moonshot.cn/anthropic
+
+输入序号切换 (回车跳过): 2
+
+✓ 已切换到 Azure
+  模型: claude-opus-4.6
+  重启 Claude Code 生效
+```
+
+> 提示：在真实终端中，`ccm ls` 会显示交互式方向键选择器（基于 [@clack/prompts](https://github.com/bombshell-dev/clack)）。
 
 ## ✨ 亮点
 
@@ -47,6 +70,9 @@ ccm init   # 自动检测 cc-switch 或初始化独立模式
 ccm ls     # 选择并切换
 ```
 
+> **没有 ccm**: 手动编辑 `~/.claude/settings.json`，复制粘贴 API key，重启，祈祷 JSON 没写错。
+> **使用 ccm**: `ccm use OpenRouter` — 搞定。
+
 ## 🔌 cc-switch 集成
 
 已经在用 [cc-switch](https://github.com/nicepkg/cc-switch)？ccm 直接读取它的 SQLite 数据库：
@@ -63,48 +89,31 @@ $ ccm init
 
 ## ➕ 添加配置
 
-两种方式添加供应商配置：
+### 交互式向导（推荐）
 
-### 1. 交互式向导（推荐）
-
-运行 `ccm add`，按提示操作：
-
-```
+```bash
 $ ccm add
-```
-
-**第一步** — 输入供应商名称，选择输入方式：
-
-```
 供应商名称 (如 OpenRouter): OpenRouter
 
 选择添加方式:
-  1) 逐步填写
-  2) 直接编写 JSON
-请选择 (1/2): 1
-```
+  1) 逐步填写           # 按步骤输入，输入 < 返回上一步
+  2) 直接编写 JSON      # 打开 $EDITOR 编辑
 
-**第二步** — 逐步填写配置字段（输入 `<` 返回上一步）：
+ANTHROPIC_BASE_URL: https://openrouter.ai/api/v1
+ANTHROPIC_AUTH_TOKEN: sk-or-xxx
+ANTHROPIC_MODEL: anthropic/claude-opus-4.6
+ANTHROPIC_DEFAULT_OPUS_MODEL (可选):
+ANTHROPIC_DEFAULT_SONNET_MODEL (可选):
+ANTHROPIC_DEFAULT_HAIKU_MODEL (可选):
 
-| 字段 | 必填 | 示例 |
-|---|---|---|
-| `ANTHROPIC_BASE_URL` | ✅ | `https://openrouter.ai/api/v1` |
-| `ANTHROPIC_AUTH_TOKEN` | ✅ | `sk-or-xxx` |
-| `ANTHROPIC_MODEL` | ✅ | `anthropic/claude-opus-4.6` |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | | `Claude Opus 4.6` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | | `Claude Sonnet 4.6` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | | `Claude Haiku 4.5` |
-
-**第三步** — 预览配置，可选在 `$EDITOR` 中编辑，保存并切换：
-
-```
 ✓ 已保存配置 "OpenRouter"
 是否立即切换到此配置？(Y/n)
 ```
 
-### 2. 直接编辑 JSON
+### 直接编辑 JSON
 
-独立模式下，编辑 `~/.ccm/config.json`：
+<details>
+<summary>独立模式：<code>~/.ccm/config.json</code></summary>
 
 ```json
 {
@@ -113,15 +122,13 @@ $ ccm add
       "env": {
         "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1",
         "ANTHROPIC_AUTH_TOKEN": "sk-or-...",
-        "ANTHROPIC_MODEL": "anthropic/claude-opus-4.6",
-        "ANTHROPIC_DEFAULT_OPUS_MODEL": "Claude Opus 4.6",
-        "ANTHROPIC_DEFAULT_SONNET_MODEL": "Claude Sonnet 4.6",
-        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "Claude Haiku 4.5"
+        "ANTHROPIC_MODEL": "anthropic/claude-opus-4.6"
       }
     }
   }
 }
 ```
+</details>
 
 别名存储在 `~/.ccm/rc.json` 中：
 
@@ -145,6 +152,7 @@ $ ccm add
 | `ccm add` | `new` | 交互式添加向导 |
 | `ccm save <name>` | | 将当前设置保存为方案 |
 | `ccm show [name]` | | 查看配置详情 |
+| `ccm modify [name]` | `edit` | 修改已有配置 |
 | `ccm remove [name]` | `rm` | 交互式或指定名称删除 |
 | `ccm current` | | 显示当前激活配置 |
 | `ccm config` | | 切换存储模式 |
@@ -157,10 +165,6 @@ $ ccm add
 | `ccm alias rm <short>` | 删除别名 |
 | `ccm alias list` / `ls` | 列出所有别名 |
 
-### 别名管理
-
-为常用配置创建快捷方式：
-
 ```bash
 ccm alias set or OpenRouter
 ccm use or  # 等同于: ccm use OpenRouter
@@ -172,6 +176,27 @@ ccm use or  # 等同于: ccm use OpenRouter
 |---|---|
 | `ccm locale` / `ls` | 列出并切换语言 |
 | `ccm locale set <lang>` | 设置语言（`zh` / `en`） |
+
+### 使用示例
+
+```bash
+# 切换供应商
+$ ccm use OpenRouter
+✓ 已切换到 OpenRouter
+  模型: anthropic/claude-opus-4.6
+  重启 Claude Code 生效
+
+# 查看当前配置
+$ ccm current
+当前配置: OpenRouter
+  ANTHROPIC_BASE_URL: https://openrouter.ai/api/v1
+  ANTHROPIC_MODEL: anthropic/claude-opus-4.6
+  ANTHROPIC_AUTH_TOKEN: sk-or-v1...a3f2
+
+# 将当前 settings.json 保存为新方案
+$ ccm save my-backup
+✓ 已保存当前配置为 "my-backup"
+```
 
 ## ⚙️ 工作原理
 
