@@ -135,6 +135,7 @@ ANTHROPIC_DEFAULT_HAIKU_MODEL (可选):
 | `ccm remove [name]` | `rm` | 交互式或指定名称删除 |
 | `ccm current` | | 显示当前激活配置 |
 | `ccm sync` | | 从 cc-switch 同步配置到本地 |
+| `ccm import [file]` | | 从 JSON 导入配置（无文件时从 stdin 读取） |
 | `ccm clear` | | 清理数据文件 |
 
 ### 别名管理

@@ -270,6 +270,54 @@ program
     console.log(chalk.green(t("clear.done")));
   });
 
+// ccm import
+program
+  .command("import [file]")
+  .description(t("import.description"))
+  .action(async (file?: string) => {
+    const store = ensureStore();
+
+    let jsonContent: string;
+    if (file) {
+      // Read from file
+      if (!existsSync(file)) {
+        console.log(chalk.red(t("import.file_not_found", { file })));
+        return;
+      }
+      jsonContent = readFileSync(file, "utf-8");
+    } else {
+      // Read from stdin
+      console.log(chalk.gray(t("import.paste_hint")));
+      const chunks: Buffer[] = [];
+      process.stdin.setEncoding("utf-8");
+      for await (const chunk of process.stdin) {
+        chunks.push(Buffer.from(chunk));
+      }
+      jsonContent = Buffer.concat(chunks).toString("utf-8");
+    }
+
+    let configs: Record<string, Record<string, unknown>>;
+    try {
+      configs = JSON.parse(jsonContent);
+    } catch {
+      console.log(chalk.red(t("import.json_parse_error")));
+      return;
+    }
+
+    if (typeof configs !== "object" || configs === null || Object.keys(configs).length === 0) {
+      console.log(chalk.red(t("import.invalid_format")));
+      return;
+    }
+
+    let count = 0;
+    for (const [name, settingsConfig] of Object.entries(configs)) {
+      store.save(name, settingsConfig);
+      count++;
+    }
+
+    console.log(chalk.green(t("import.done", { count: String(count) })));
+  });
+
 // ccm list
 program
   .command("list")

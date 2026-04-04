@@ -141,6 +141,14 @@ const en: Record<TranslationKey, string> = {
   "clear.removed": "✓ Deleted {path}",
   "clear.done": "✓ Cleanup complete",
 
+  // import
+  "import.description": "Import configurations from JSON (file or stdin)",
+  "import.paste_hint": "Paste JSON and press Ctrl+D (or Ctrl+Z on Windows) to finish:",
+  "import.file_not_found": 'File not found: {file}',
+  "import.json_parse_error": "Invalid JSON format",
+  "import.invalid_format": "Invalid format: expected object with configuration names as keys",
+  "import.done": "✓ Imported {count} configurations",
+
   // store errors
   "store.db_not_found": "cc-switch database not found: {path}",
 };

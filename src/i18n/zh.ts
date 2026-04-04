@@ -139,6 +139,14 @@ const zh = {
   "clear.removed": "✓ 已删除 {path}",
   "clear.done": "✓ 清理完成",
 
+  // import
+  "import.description": "从 JSON 导入配置（文件或粘贴）",
+  "import.paste_hint": "粘贴 JSON，按 Ctrl+D（或 Windows 的 Ctrl+Z）结束:",
+  "import.file_not_found": '文件不存在: {file}',
+  "import.json_parse_error": "JSON 格式无效",
+  "import.invalid_format": "格式错误: 应为以配置名称为键的对象",
+  "import.done": "✓ 已导入 {count} 个配置",
+
   // store errors
   "store.db_not_found": "cc-switch 数据库不存在: {path}",
 } as const;
