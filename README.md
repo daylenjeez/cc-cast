@@ -202,8 +202,6 @@ Use `ccm clear` to delete them automatically, or clean them up manually:
 - `~/.ccm/config.json` — profiles
 - `~/.claude/settings.json` — may still contain an active `env` profile written by ccm
 
-> Do **not** delete `~/.cc-switch/cc-switch.db` unless you are also uninstalling cc-switch; that database is owned by cc-switch.
-
 ## 📄 License
 
 [MIT](./LICENSE)
