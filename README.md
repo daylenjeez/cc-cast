@@ -33,13 +33,6 @@ Switch Claude Code custom model configurations from the terminal in seconds.
 npm install -g @daylenjeez/ccm-switch
 ```
 
-Or build from source:
-
-```bash
-git clone git@github.com:daylenjeez/ccm-switch.git
-cd ccm && npm install && npm run build && npm link
-```
-
 ## 🚀 Quick Start
 
 ```bash

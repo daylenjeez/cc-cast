@@ -33,13 +33,6 @@
 npm install -g @daylenjeez/ccm-switch
 ```
 
-或从源码构建：
-
-```bash
-git clone git@github.com:daylenjeez/ccm-switch.git
-cd ccm && npm install && npm run build && npm link
-```
-
 ## 🚀 快速开始
 
 ```bash
