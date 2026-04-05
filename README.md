@@ -52,19 +52,17 @@ ccm add    # Interactive wizard to add a provider
 
 ## 🔌 cc-switch Integration
 
-Already using [cc-switch](https://github.com/farion1231/cc-switch)? ccm can sync its configurations into standalone storage:
+Already using [cc-switch](https://github.com/farion1231/cc-switch)? When the cc-switch database is detected, ccm works directly with it instead of using standalone storage:
 
 ```bash
 $ ccm init
-cc-switch detected. Import configurations from it? (Y/n)
 ✓ Initialized
-✓ Synced 4 configurations
-Active: OpenRouter
+✓ cc-switch detected — ccm will use cc-switch's configuration store directly
 ```
 
-You can also run `ccm sync` at any time to pull the latest cc-switch configurations into `~/.ccm/config.json`.
+You can also run `ccm sync` at any time to pull the latest cc-switch configurations into standalone mode.
 
-> ⚠️ **Known Issue**: After ccm modifies `~/.claude/settings.json`, cc-switch will automatically sync the content back to its database, overwriting the current provider's `settings_config`. If the configurations differ between the two tools, the original configuration stored in cc-switch will be modified.
+> **Safe Coexistence**: When the cc-switch GUI is running, ccm detects it and skips writing `~/.claude/settings.json` directly. Instead it only updates the active provider marker. The cc-switch GUI then syncs the new configuration to the live settings file automatically, avoiding race conditions and preventing one provider's config from overwriting another.
 
 ## ➕ Adding Configurations
 
