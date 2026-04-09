@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/icon.png" alt="cc-cast" width="120" />
+
 # cc-cast
 
 **Claude Code Model Switcher**
