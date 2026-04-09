@@ -9,8 +9,8 @@
     "ccc": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsup src/index.ts --format esm --target node18 --minify --clean --out-dir dist --splitting false --external better-sqlite3 chalk commander enquirer update-notifier && tsc --emitDeclarationOnly",
+    "dev": "tsup src/index.ts --format esm --target node18 --minify --clean --out-dir dist --splitting false --external better-sqlite3 chalk commander enquirer update-notifier --watch"
   },
   "keywords": [
     "claude",
@@ -34,6 +34,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.5.2",
     "@types/update-notifier": "^6.0.8",
+    "tsup": "^8.5.1",
     "typescript": "^6.0.2"
   }
 }
