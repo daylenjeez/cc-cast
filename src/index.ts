@@ -214,9 +214,21 @@ async function resolveProfile(store: ReturnType<typeof ensureStore>, input: stri
   // Direct match
   if (directProfile) return directProfile;
 
+  // Normalized match (hyphens/underscores → spaces)
+  const normalizedInput = input.replace(/[-_]/g, " ");
+  if (normalizedInput !== input) {
+    const normalizedProfile = store.get(normalizedInput);
+    if (normalizedProfile) return normalizedProfile;
+  }
+
   // Fuzzy matching
   const allNames = store.list().map((p) => p.name);
   const suggestions = findSuggestions(input, allNames);
+
+  if (suggestions.length === 1) {
+    const profile = store.get(suggestions[0]);
+    if (profile) return profile;
+  }
 
   console.log(chalk.red(t("error.not_found", { name: input })));
   if (suggestions.length === 1) {
