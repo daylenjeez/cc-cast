@@ -45,3 +45,42 @@ export function isCcSwitchGuiRunning(): boolean {
     return false;
   }
 }
+
+// Kill cc-switch GUI and return the .app path for relaunch (macOS only).
+// Returns null on Linux/other or if the app path can't be determined.
+export function stopCcSwitchGui(): string | null {
+  try {
+    let appPath: string | null = null;
+
+    if (process.platform === "darwin") {
+      const pgrepResult = spawnSync("pgrep", ["-f", "cc-switch"], { encoding: "utf-8" });
+      if (pgrepResult.status === 0) {
+        const pids = pgrepResult.stdout.trim().split("\n");
+        for (const pid of pids) {
+          const psResult = spawnSync("ps", ["-p", pid, "-o", "args="], { encoding: "utf-8" });
+          const args = psResult.stdout.trim();
+          const match = args.match(/^(.+?\.app)\b/);
+          if (match) {
+            appPath = match[1];
+            break;
+          }
+        }
+      }
+    }
+
+    spawnSync("pkill", ["-f", "cc-switch"]);
+    spawnSync("sleep", ["0.5"]);
+
+    return appPath;
+  } catch {
+    return null;
+  }
+}
+
+export function launchCcSwitchGui(appPath: string): void {
+  try {
+    spawnSync("open", ["-g", appPath], { encoding: "utf-8" });
+  } catch {
+    // ignore
+  }
+}

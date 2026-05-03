@@ -46,7 +46,8 @@ const zh = {
   "use.description": "切换到指定配置方案",
   "use.done": "✓ 已切换到 {name}",
   "use.restart": "重启 Claude Code 生效",
-  "use.cc_switch_running": "检测到 cc-switch GUI 正在运行，为避免配置冲突，仅更新了当前配置标记。请在 cc-switch GUI 中手动切换，或退出 GUI 后重试。",
+  "use.cc_switch_restarting": "检测到 cc-switch GUI，正在重启以同步配置...",
+  "use.cc_switch_relaunch_manual": "无法自动重启 cc-switch，请手动打开。",
 
   // save
   "save.description": "从当前 settings.json 保存为新配置",

@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 import chalk from "chalk";
-import { readRc, writeRc, getStore, isCcSwitchGuiRunning } from "./utils.js";
+import { readRc, writeRc, getStore, isCcSwitchGuiRunning, stopCcSwitchGui, launchCcSwitchGui } from "./utils.js";
 import { ccSwitchExists } from "./store/cc-switch.js";
 import { readClaudeSettings, applyProfile } from "./claude.js";
 import { createInterface } from "readline";
@@ -75,6 +75,22 @@ function ask(question: string, prefill?: string): Promise<string> {
 // Helper: ensure store ready
 function ensureStore() {
   return getStore();
+}
+
+// Helper: apply profile with cc-switch GUI restart if needed
+function applySafely(name: string, settingsConfig: Record<string, unknown>): void {
+  if (isCcSwitchGuiRunning()) {
+    console.log(chalk.gray(t("use.cc_switch_restarting")));
+    const appPath = stopCcSwitchGui();
+    applyProfile(name, settingsConfig);
+    if (appPath) {
+      launchCcSwitchGui(appPath);
+    } else {
+      console.log(chalk.yellow(t("use.cc_switch_relaunch_manual")));
+    }
+  } else {
+    applyProfile(name, settingsConfig);
+  }
 }
 
 // Helper: print current active configuration
@@ -415,15 +431,11 @@ program
       const profile = store.get(name)!;
       store.setCurrent(profile.name);
       console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
-      if (isCcSwitchGuiRunning()) {
-        console.log(chalk.yellow(t("use.cc_switch_running")));
-      } else {
-        applyProfile(profile.name, profile.settingsConfig);
-        const env = (profile.settingsConfig.env || {}) as Record<string, string>;
-        const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
-        console.log(`  ${t("common.model")}: ${chalk.cyan(model)}`);
-        console.log(chalk.gray(`  ${t("use.restart")}`));
-      }
+      applySafely(profile.name, profile.settingsConfig);
+      const env = (profile.settingsConfig.env || {}) as Record<string, string>;
+      const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
+      console.log(`  ${t("common.model")}: ${chalk.cyan(model)}`);
+      console.log(chalk.gray(`  ${t("use.restart")}`));
     };
 
     const isInteractive = process.stdin.isTTY && process.stdout.isTTY;
@@ -508,15 +520,11 @@ program
 
     store.setCurrent(profile.name);
     console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
-    if (isCcSwitchGuiRunning()) {
-      console.log(chalk.yellow(t("use.cc_switch_running")));
-    } else {
-      applyProfile(profile.name, profile.settingsConfig);
-      const env = (profile.settingsConfig.env || {}) as Record<string, string>;
-      const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
-      console.log(`  ${t("common.model")}: ${chalk.cyan(model)}`);
-      console.log(chalk.gray(`  ${t("use.restart")}`));
-    }
+    applySafely(profile.name, profile.settingsConfig);
+    const env = (profile.settingsConfig.env || {}) as Record<string, string>;
+    const model = env["ANTHROPIC_MODEL"] || t("common.model_default");
+    console.log(`  ${t("common.model")}: ${chalk.cyan(model)}`);
+    console.log(chalk.gray(`  ${t("use.restart")}`));
   });
 
 // cc-castsave <name>
@@ -574,12 +582,8 @@ async function saveAndSwitch(store: ReturnType<typeof ensureStore>, name: string
   if (switchChoice.toLowerCase() !== "n") {
     store.setCurrent(name);
     console.log(chalk.green(t("use.done", { name: chalk.bold(name) })));
-    if (isCcSwitchGuiRunning()) {
-      console.log(chalk.yellow(t("use.cc_switch_running")));
-    } else {
-      applyProfile(name, settingsConfig);
-      console.log(chalk.gray(`  ${t("use.restart")}`));
-    }
+    applySafely(name, settingsConfig);
+    console.log(chalk.gray(`  ${t("use.restart")}`));
   }
 }
 
@@ -898,15 +902,11 @@ program
       if (switchChoice.toLowerCase() !== "n") {
         store.setCurrent(profile.name);
         console.log(chalk.green(t("use.done", { name: chalk.bold(profile.name) })));
-        if (isCcSwitchGuiRunning()) {
-          console.log(chalk.yellow(t("use.cc_switch_running")));
-        } else {
-          applyProfile(profile.name, settingsConfig);
-          console.log(chalk.gray(`  ${t("use.restart")}`));
-        }
+        applySafely(profile.name, settingsConfig);
+        console.log(chalk.gray(`  ${t("use.restart")}`));
       }
     } else {
-      applyProfile(profile.name, settingsConfig);
+      applySafely(profile.name, settingsConfig);
       console.log(chalk.gray(`  ${t("use.restart")}`));
     }
   });

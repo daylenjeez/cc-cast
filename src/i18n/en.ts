@@ -48,7 +48,8 @@ const en: Record<TranslationKey, string> = {
   "use.description": "Switch to a specified configuration",
   "use.done": "✓ Switched to {name}",
   "use.restart": "Restart Claude Code to apply",
-  "use.cc_switch_running": "cc-switch GUI is running. To avoid config conflicts, only the active marker was updated. Please switch manually in cc-switch GUI, or quit GUI and try again.",
+  "use.cc_switch_restarting": "cc-switch GUI detected, restarting to sync config...",
+  "use.cc_switch_relaunch_manual": "Could not auto-restart cc-switch. Please reopen it manually.",
 
   // save
   "save.description": "Save current settings.json as a new configuration",
